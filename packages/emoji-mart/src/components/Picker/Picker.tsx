@@ -647,6 +647,7 @@ export default class Picker extends Component {
 
   handlePointerDown = (emoji, e) => {
     this.longPressTriggered = false
+    this.pointerDownPos = { x: e.clientX, y: e.clientY }
     const target = e.currentTarget
     this.longPressTimer = setTimeout(() => {
       this.longPressTriggered = true
@@ -654,12 +655,24 @@ export default class Picker extends Component {
     }, this.props.longPressDuration || 500)
   }
 
+  handlePointerMove = (e) => {
+    if (!this.longPressTimer || !this.pointerDownPos) return
+    const dx = e.clientX - this.pointerDownPos.x
+    const dy = e.clientY - this.pointerDownPos.y
+    if (dx * dx + dy * dy > 100) {
+      clearTimeout(this.longPressTimer)
+      this.longPressTimer = null
+    }
+  }
+
   handlePointerUp = () => {
     clearTimeout(this.longPressTimer)
+    this.longPressTimer = null
   }
 
   handlePointerLeave = () => {
     clearTimeout(this.longPressTimer)
+    this.longPressTimer = null
   }
 
   handleFavoriteToggle(emoji, target) {
@@ -685,7 +698,7 @@ export default class Picker extends Component {
   showFavoriteAnimation(target, added) {
     const el = document.createElement('span')
     el.className = added ? 'favorite-anim favorite-anim-add' : 'favorite-anim favorite-anim-remove'
-    el.textContent = '\u2605'
+    el.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 .587l3.668 7.568L24 9.306l-6.064 5.828 1.48 8.279L12 19.446l-7.417 3.967 1.481-8.279L0 9.306l8.332-1.151z"/></svg>'
     target.appendChild(el)
     setTimeout(() => el.remove(), 600)
   }
@@ -863,6 +876,7 @@ export default class Picker extends Component {
             this.handlePointerLeave()
           }}
           onPointerDown={(e) => this.handlePointerDown(emoji, e)}
+          onPointerMove={this.handlePointerMove}
           onPointerUp={this.handlePointerUp}
           onPointerLeave={this.handlePointerLeave}
           style={{
@@ -894,7 +908,9 @@ export default class Picker extends Component {
           />
           {isFavorite && (
             <span class="favorite-indicator" aria-hidden="true">
-              \u2605
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="8" height="8">
+                <path d="M12 .587l3.668 7.568L24 9.306l-6.064 5.828 1.48 8.279L12 19.446l-7.417 3.967 1.481-8.279L0 9.306l8.332-1.151z" />
+              </svg>
             </span>
           )}
         </button>
