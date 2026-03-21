@@ -126,7 +126,7 @@ async function _init(props) {
   }
 
   if (props.categories) {
-    Data.categories = Data.originalCategories
+    Data.categories = Data.categories
       .filter((c) => {
         return props.categories.indexOf(c.id) != -1
       })

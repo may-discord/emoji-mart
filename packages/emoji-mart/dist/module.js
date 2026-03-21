@@ -788,17 +788,11 @@ let $7adb23b0109cc36a$var$initiated = false;
 let $7adb23b0109cc36a$var$initCallback = null;
 let $7adb23b0109cc36a$var$initialized = false;
 function $7adb23b0109cc36a$export$2cd8252107eb640b(options, { caller: caller  } = {}) {
-    if (options) {
-        $7adb23b0109cc36a$var$promise = new Promise((resolve)=>{
-            $7adb23b0109cc36a$var$initCallback = resolve;
-        });
-        $7adb23b0109cc36a$var$_init(options);
-    } else {
-        $7adb23b0109cc36a$var$promise || ($7adb23b0109cc36a$var$promise = new Promise((resolve)=>{
-            $7adb23b0109cc36a$var$initCallback = resolve;
-        }));
-        if (caller && !$7adb23b0109cc36a$var$initialized) console.warn(`\`${caller}\` requires data to be initialized first. Promise will be pending until \`init\` is called.`);
-    }
+    $7adb23b0109cc36a$var$promise || ($7adb23b0109cc36a$var$promise = new Promise((resolve)=>{
+        $7adb23b0109cc36a$var$initCallback = resolve;
+    }));
+    if (options) $7adb23b0109cc36a$var$_init(options);
+    else if (caller && !$7adb23b0109cc36a$var$initialized) console.warn(`\`${caller}\` requires data to be initialized first. Promise will be pending until \`init\` is called.`);
     return $7adb23b0109cc36a$var$promise;
 }
 async function $7adb23b0109cc36a$var$_init(props) {
@@ -826,20 +820,12 @@ async function $7adb23b0109cc36a$var$_init(props) {
             emoji.aliases || (emoji.aliases = []);
             emoji.aliases.push(alias);
         }
-        $7adb23b0109cc36a$export$2d0294657ab35f1b.originalCategories = [
-            ...$7adb23b0109cc36a$export$2d0294657ab35f1b.categories
-        ];
-    } else {
-        $7adb23b0109cc36a$export$2d0294657ab35f1b.categories = $7adb23b0109cc36a$export$2d0294657ab35f1b.categories.filter((c)=>{
-            const isCustom = !!c.name;
-            if (!isCustom) return true;
-            return false;
-        });
-        if (!$7adb23b0109cc36a$export$2d0294657ab35f1b.categories.find((c)=>c.id === "favorites")) $7adb23b0109cc36a$export$2d0294657ab35f1b.categories.unshift({
-            id: "favorites",
-            emojis: []
-        });
-    }
+        $7adb23b0109cc36a$export$2d0294657ab35f1b.originalCategories = $7adb23b0109cc36a$export$2d0294657ab35f1b.categories;
+    } else $7adb23b0109cc36a$export$2d0294657ab35f1b.categories = $7adb23b0109cc36a$export$2d0294657ab35f1b.categories.filter((c)=>{
+        const isCustom = !!c.name;
+        if (!isCustom) return true;
+        return false;
+    });
     $7adb23b0109cc36a$export$dbe3113d60765c1a = (typeof props.i18n === "function" ? await props.i18n() : props.i18n) || (locale == "en" ? (0, (/*@__PURE__*/$parcel$interopDefault($8d50d93417ef682a$exports))) : await $7adb23b0109cc36a$var$fetchJSON(`https://cdn.jsdelivr.net/npm/@emoji-mart/data@latest/i18n/${locale}.json`));
     if (props.custom) for(let i in props.custom){
         i = parseInt(i);
@@ -852,7 +838,7 @@ async function $7adb23b0109cc36a$var$_init(props) {
         $7adb23b0109cc36a$export$2d0294657ab35f1b.categories.push(category);
         for (const emoji of category.emojis)$7adb23b0109cc36a$export$2d0294657ab35f1b.emojis[emoji.id] = emoji;
     }
-    if (props.categories) $7adb23b0109cc36a$export$2d0294657ab35f1b.categories = $7adb23b0109cc36a$export$2d0294657ab35f1b.originalCategories.filter((c)=>{
+    if (props.categories) $7adb23b0109cc36a$export$2d0294657ab35f1b.categories = $7adb23b0109cc36a$export$2d0294657ab35f1b.categories.filter((c)=>{
         return props.categories.indexOf(c.id) != -1;
     }).sort((c1, c2)=>{
         const i1 = props.categories.indexOf(c1.id);

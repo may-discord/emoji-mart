@@ -1806,7 +1806,6 @@ var $4000c4e330959fe1$export$2e2bcd8739ae039 = {
 
 
 
-
 var $hdvdM = parcelRequire("hdvdM");
 
 var $128a97276525cf7f$exports = {};
@@ -2033,17 +2032,11 @@ var $47b4a70d4572a3b3$var$initCallback = null;
 var $47b4a70d4572a3b3$var$initialized = false;
 function $47b4a70d4572a3b3$export$2cd8252107eb640b(options) {
     var caller = (arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {}).caller;
-    if (options) {
-        $47b4a70d4572a3b3$var$promise = new Promise(function(resolve) {
-            $47b4a70d4572a3b3$var$initCallback = resolve;
-        });
-        $47b4a70d4572a3b3$var$_init(options);
-    } else {
-        $47b4a70d4572a3b3$var$promise || ($47b4a70d4572a3b3$var$promise = new Promise(function(resolve) {
-            $47b4a70d4572a3b3$var$initCallback = resolve;
-        }));
-        if (caller && !$47b4a70d4572a3b3$var$initialized) console.warn("`".concat(caller, "` requires data to be initialized first. Promise will be pending until `init` is called."));
-    }
+    $47b4a70d4572a3b3$var$promise || ($47b4a70d4572a3b3$var$promise = new Promise(function(resolve) {
+        $47b4a70d4572a3b3$var$initCallback = resolve;
+    }));
+    if (options) $47b4a70d4572a3b3$var$_init(options);
+    else if (caller && !$47b4a70d4572a3b3$var$initialized) console.warn("`".concat(caller, "` requires data to be initialized first. Promise will be pending until `init` is called."));
     return $47b4a70d4572a3b3$var$promise;
 }
 function $47b4a70d4572a3b3$var$_init(props) {
@@ -2118,23 +2111,15 @@ function $47b4a70d4572a3b3$var$__init() {
                     _ctx.next = 24;
                     break;
                 case 34:
-                    $47b4a70d4572a3b3$export$2d0294657ab35f1b.originalCategories = (0, (/*@__PURE__*/$parcel$interopDefault($768065e6069a057e$exports)))($47b4a70d4572a3b3$export$2d0294657ab35f1b.categories);
+                    $47b4a70d4572a3b3$export$2d0294657ab35f1b.originalCategories = $47b4a70d4572a3b3$export$2d0294657ab35f1b.categories;
                     _ctx.next = 38;
                     break;
                 case 37:
-                    {
-                        $47b4a70d4572a3b3$export$2d0294657ab35f1b.categories = $47b4a70d4572a3b3$export$2d0294657ab35f1b.categories.filter(function(c) {
-                            var isCustom = !!c.name;
-                            if (!isCustom) return true;
-                            return false;
-                        });
-                        if (!$47b4a70d4572a3b3$export$2d0294657ab35f1b.categories.find(function(c) {
-                            return c.id === "favorites";
-                        })) $47b4a70d4572a3b3$export$2d0294657ab35f1b.categories.unshift({
-                            id: "favorites",
-                            emojis: []
-                        });
-                    }
+                    $47b4a70d4572a3b3$export$2d0294657ab35f1b.categories = $47b4a70d4572a3b3$export$2d0294657ab35f1b.categories.filter(function(c) {
+                        var isCustom = !!c.name;
+                        if (!isCustom) return true;
+                        return false;
+                    });
                 case 38:
                     if (!(typeof props.i18n === "function")) {
                         _ctx.next = 44;
@@ -2228,7 +2213,7 @@ function $47b4a70d4572a3b3$var$__init() {
                     _ctx.next = 58;
                     break;
                 case 88:
-                    if (props.categories) $47b4a70d4572a3b3$export$2d0294657ab35f1b.categories = $47b4a70d4572a3b3$export$2d0294657ab35f1b.originalCategories.filter(function(c) {
+                    if (props.categories) $47b4a70d4572a3b3$export$2d0294657ab35f1b.categories = $47b4a70d4572a3b3$export$2d0294657ab35f1b.categories.filter(function(c) {
                         return props.categories.indexOf(c.id) != -1;
                     }).sort(function(c1, c2) {
                         var i1 = props.categories.indexOf(c1.id);
