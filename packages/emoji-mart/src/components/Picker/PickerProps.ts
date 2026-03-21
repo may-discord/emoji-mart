@@ -104,6 +104,7 @@ export default {
   categoryIcons: null,
   custom: null,
   data: null,
+  favorites: null,
   i18n: null,
 
   // Callbacks
@@ -112,6 +113,15 @@ export default {
   onAddCustomEmoji: null,
   onClickOutside: null,
   onEmojiSelect: null,
+  onFavoriteChange: null,
+
+  // Favorites
+  maxFavorites: {
+    value: 100,
+  },
+  longPressDuration: {
+    value: 500,
+  },
 
   // Deprecated
   stickySearch: {

@@ -3,7 +3,7 @@ import { Component, createRef } from 'preact'
 
 import { deepEqual, sleep, getEmojiData } from '../../utils'
 import { Data, I18n, init } from '../../config'
-import { SearchIndex, Store, FrequentlyUsed } from '../../helpers'
+import { SearchIndex, Store, FrequentlyUsed, Favorites } from '../../helpers'
 import Icons from '../../icons'
 
 import { Emoji } from '../Emoji'
@@ -59,6 +59,11 @@ export default class Picker extends Component {
 
       this.props.searchPosition = 'static'
     }
+
+    if (this.props.favorites) {
+      Favorites.set(this.props.favorites)
+      this.refreshFavoritesCategory()
+    }
   }
 
   componentDidMount() {
@@ -91,6 +96,11 @@ export default class Picker extends Component {
         if (k === 'custom' || k === 'categories') {
           requiresGridReset = true
         }
+
+        if (k === 'favorites') {
+          Favorites.set(this.nextState[k])
+          requiresGridReset = true
+        }
       }
 
       delete this.nextState
@@ -106,6 +116,7 @@ export default class Picker extends Component {
 
   componentWillUnmount() {
     this.unregister()
+    clearTimeout(this.longPressTimer)
   }
 
   async reset(nextState = {}) {
@@ -616,6 +627,7 @@ export default class Picker extends Component {
   }
 
   handleEmojiClick({ e, emoji, pos }) {
+    if (this.longPressTriggered) return
     if (!this.props.onEmojiSelect) return
 
     if (!emoji && pos) {
@@ -631,6 +643,81 @@ export default class Picker extends Component {
 
       this.props.onEmojiSelect(emojiData, e)
     }
+  }
+
+  handlePointerDown = (emoji, e) => {
+    this.longPressTriggered = false
+    const target = e.currentTarget
+    this.longPressTimer = setTimeout(() => {
+      this.longPressTriggered = true
+      this.handleFavoriteToggle(emoji, target)
+    }, this.props.longPressDuration || 500)
+  }
+
+  handlePointerUp = () => {
+    clearTimeout(this.longPressTimer)
+  }
+
+  handlePointerLeave = () => {
+    clearTimeout(this.longPressTimer)
+  }
+
+  handleFavoriteToggle(emoji, target) {
+    const emojiId = emoji.id
+    const { added } = Favorites.toggle(emojiId)
+
+    if (target) {
+      this.showFavoriteAnimation(target, added)
+    }
+
+    if (this.props.onFavoriteChange) {
+      const emojiData = getEmojiData(emoji, { skinIndex: this.state.skin - 1 })
+      this.props.onFavoriteChange(
+        Favorites.get(),
+        emojiData,
+        added ? 'add' : 'remove',
+      )
+    }
+
+    this.refreshFavoritesCategory()
+  }
+
+  showFavoriteAnimation(target, added) {
+    const el = document.createElement('span')
+    el.className = added ? 'favorite-anim favorite-anim-add' : 'favorite-anim favorite-anim-remove'
+    el.textContent = '\u2605'
+    target.appendChild(el)
+    setTimeout(() => el.remove(), 600)
+  }
+
+  refreshFavoritesCategory() {
+    const { categories } = Data
+    const favCategory = categories.find((c) => c.id === 'favorites')
+
+    if (favCategory) {
+      favCategory.emojis = Favorites.get()
+
+      if (!favCategory.emojis.length) {
+        const idx = categories.indexOf(favCategory)
+        if (idx !== -1) categories.splice(idx, 1)
+      }
+    } else {
+      const favoriteEmojis = Favorites.get()
+      if (favoriteEmojis.length) {
+        const insertIndex = 0
+        categories.splice(insertIndex, 0, {
+          id: 'favorites',
+          emojis: favoriteEmojis,
+        })
+      }
+    }
+
+    this.initGrid()
+    this.unobserve()
+    this.setState({}, () => {
+      this.observeCategories()
+      this.observeRows()
+    })
   }
 
   openSkins = (e) => {
@@ -755,9 +842,10 @@ export default class Picker extends Component {
     const native = emojiSkin.native
     const selected = deepEqual(this.state.pos, pos)
     const key = pos.concat(emoji.id).join('')
+    const isFavorite = Favorites.has(emoji.id)
 
     return (
-      <PureInlineComponent key={key} {...{ selected, skin, size }}>
+      <PureInlineComponent key={key} {...{ selected, skin, size, isFavorite }}>
         <button
           aria-label={native}
           aria-selected={selected || undefined}
@@ -770,7 +858,13 @@ export default class Picker extends Component {
           tabindex="-1"
           onClick={(e) => this.handleEmojiClick({ e, emoji })}
           onMouseEnter={() => this.handleEmojiOver(pos)}
-          onMouseLeave={() => this.handleEmojiOver()}
+          onMouseLeave={() => {
+            this.handleEmojiOver()
+            this.handlePointerLeave()
+          }}
+          onPointerDown={(e) => this.handlePointerDown(emoji, e)}
+          onPointerUp={this.handlePointerUp}
+          onPointerLeave={this.handlePointerLeave}
           style={{
             width: this.props.emojiButtonSize,
             height: this.props.emojiButtonSize,
@@ -798,6 +892,11 @@ export default class Picker extends Component {
             spritesheet={true}
             getSpritesheetURL={this.props.getSpritesheetURL}
           />
+          {isFavorite && (
+            <span class="favorite-indicator" aria-hidden="true">
+              \u2605
+            </span>
+          )}
         </button>
       </PureInlineComponent>
     )

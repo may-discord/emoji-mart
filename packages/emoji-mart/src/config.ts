@@ -2,6 +2,7 @@
 import i18n_en from '@emoji-mart/data/i18n/en.json'
 import PickerProps from './components/Picker/PickerProps'
 import {
+  Favorites,
   FrequentlyUsed,
   NativeSupport,
   SafeFlags,
@@ -66,6 +67,11 @@ async function _init(props) {
 
     Data.categories.unshift({
       id: 'frequent',
+      emojis: [],
+    })
+
+    Data.categories.unshift({
+      id: 'favorites',
       emojis: [],
     })
 
@@ -143,6 +149,10 @@ async function _init(props) {
   let resetSearchIndex = false
   while (categoryIndex--) {
     const category = Data.categories[categoryIndex]
+
+    if (category.id == 'favorites') {
+      category.emojis = Favorites.get()
+    }
 
     if (category.id == 'frequent') {
       let { maxFrequentRows, perLine } = props

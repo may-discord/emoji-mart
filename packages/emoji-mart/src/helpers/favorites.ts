@@ -1,0 +1,63 @@
+// @ts-nocheck
+import { Store } from '../helpers'
+
+const MAX_FAVORITES = 100
+
+let List: string[] | null = null
+
+function add(emoji: { id: string }) {
+  List || (List = Store.get('favorites') || [])
+
+  const emojiId = emoji.id || emoji
+  if (!emojiId) return
+
+  if (List.includes(emojiId)) return
+
+  if (List.length >= MAX_FAVORITES) {
+    List.shift()
+  }
+
+  List.push(emojiId)
+  Store.set('favorites', List)
+}
+
+function remove(emoji: { id: string }) {
+  List || (List = Store.get('favorites') || [])
+
+  const emojiId = emoji.id || emoji
+  if (!emojiId) return
+
+  const index = List.indexOf(emojiId)
+  if (index === -1) return
+
+  List.splice(index, 1)
+  Store.set('favorites', List)
+}
+
+function toggle(emoji: { id: string }): { added: boolean } {
+  const emojiId = emoji.id || emoji
+  if (has(emojiId)) {
+    remove(emoji)
+    return { added: false }
+  } else {
+    add(emoji)
+    return { added: true }
+  }
+}
+
+function get(): string[] {
+  List || (List = Store.get('favorites') || [])
+  return [...List]
+}
+
+function has(emojiId: string): boolean {
+  List || (List = Store.get('favorites') || [])
+  return List.includes(emojiId)
+}
+
+function set(emojiIds: string[]) {
+  List = emojiIds.slice(0, MAX_FAVORITES)
+  Store.set('favorites', List)
+}
+
+export default { add, remove, toggle, get, has, set }

@@ -530,3 +530,65 @@ button {
   .skin-tone-5 { background-color: #916544 }
   .skin-tone-6 { background-color: #61493F }
 }
+
+// Favorites indicator
+.favorite-indicator {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  font-size: 8px;
+  line-height: 1;
+  color: rgb(var(--em-rgb-accent));
+  pointer-events: none;
+  z-index: 1;
+}
+
+// Favorites animation
+.favorite-anim {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 16px;
+  line-height: 1;
+  pointer-events: none;
+  z-index: 10;
+  color: rgb(var(--em-rgb-accent));
+}
+
+.favorite-anim-add {
+  animation: favorite-float-up 600ms ease-out forwards;
+}
+
+.favorite-anim-remove {
+  animation: favorite-float-down 600ms ease-out forwards;
+}
+
+@keyframes favorite-float-up {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -120%) scale(1.4);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -180%) scale(0.8);
+  }
+}
+
+@keyframes favorite-float-down {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translate(-50%, -20%) scale(0.6);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, 0%) scale(0);
+  }
+}
