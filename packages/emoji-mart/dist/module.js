@@ -2518,7 +2518,7 @@ class $89bd6bb200cc8fef$export$2e2bcd8739ae039 extends (0, $fb96b826c0c5f37a$exp
             ]
         });
     }
-    renderEmojiButton(emoji, { pos: pos , posinset: posinset , grid: grid  }) {
+    renderEmojiButton(emoji, { pos: pos , posinset: posinset , grid: grid , categoryId: categoryId  }) {
         const size = this.props.emojiButtonSize;
         const skin = this.state.tempSkin || this.state.skin;
         const emojiSkin = emoji.skins[skin - 1] || emoji.skins[0];
@@ -2526,6 +2526,7 @@ class $89bd6bb200cc8fef$export$2e2bcd8739ae039 extends (0, $fb96b826c0c5f37a$exp
         const selected = (0, $693b183b0a78708f$export$9cb4719e2e525b7a)(this.state.pos, pos);
         const key = pos.concat(emoji.id).join("");
         const isFavorite = (0, $7932d8512872cd34$export$2e2bcd8739ae039).has(emoji.id);
+        const showFavoriteIndicator = isFavorite && categoryId !== "favorites";
         return /*#__PURE__*/ (0, $bd9dd35321b03dd4$export$34b9dba7ce09269b)((0, $e0d4dda61265ff1e$export$2e2bcd8739ae039), {
             selected: selected,
             skin: skin,
@@ -2577,7 +2578,7 @@ class $89bd6bb200cc8fef$export$2e2bcd8739ae039 extends (0, $fb96b826c0c5f37a$exp
                         spritesheet: true,
                         getSpritesheetURL: this.props.getSpritesheetURL
                     }),
-                    isFavorite && /*#__PURE__*/ (0, $bd9dd35321b03dd4$export$34b9dba7ce09269b)("span", {
+                    showFavoriteIndicator && /*#__PURE__*/ (0, $bd9dd35321b03dd4$export$34b9dba7ce09269b)("span", {
                         class: "favorite-indicator",
                         "aria-hidden": "true",
                         children: /*#__PURE__*/ (0, $bd9dd35321b03dd4$export$34b9dba7ce09269b)("svg", {
@@ -2666,7 +2667,8 @@ class $89bd6bb200cc8fef$export$2e2bcd8739ae039 extends (0, $fb96b826c0c5f37a$exp
                                         ii
                                     ],
                                     posinset: i * this.props.perLine + ii + 1,
-                                    grid: searchResults
+                                    grid: searchResults,
+                                    categoryId: "search"
                                 });
                             })
                         });
@@ -2731,7 +2733,8 @@ class $89bd6bb200cc8fef$export$2e2bcd8739ae039 extends (0, $fb96b826c0c5f37a$exp
                                                 ii
                                             ],
                                             posinset: row.posinset + ii,
-                                            grid: this.grid
+                                            grid: this.grid,
+                                            categoryId: category.id
                                         });
                                     })
                                 }, row.index);

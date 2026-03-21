@@ -848,7 +848,7 @@ export default class Picker extends Component {
     )
   }
 
-  renderEmojiButton(emoji, { pos, posinset, grid }) {
+  renderEmojiButton(emoji, { pos, posinset, grid, categoryId }) {
     const size = this.props.emojiButtonSize
     const skin = this.state.tempSkin || this.state.skin
     const emojiSkin = emoji.skins[skin - 1] || emoji.skins[0]
@@ -856,6 +856,7 @@ export default class Picker extends Component {
     const selected = deepEqual(this.state.pos, pos)
     const key = pos.concat(emoji.id).join('')
     const isFavorite = Favorites.has(emoji.id)
+    const showFavoriteIndicator = isFavorite && categoryId !== 'favorites'
 
     return (
       <PureInlineComponent key={key} {...{ selected, skin, size, isFavorite }}>
@@ -906,7 +907,7 @@ export default class Picker extends Component {
             spritesheet={true}
             getSpritesheetURL={this.props.getSpritesheetURL}
           />
-          {isFavorite && (
+          {showFavoriteIndicator && (
             <span class="favorite-indicator" aria-hidden="true">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="8" height="8">
                 <path d="M12 .587l3.668 7.568L24 9.306l-6.064 5.828 1.48 8.279L12 19.446l-7.417 3.967 1.481-8.279L0 9.306l8.332-1.151z" />
@@ -983,6 +984,7 @@ export default class Picker extends Component {
                       pos: [i, ii],
                       posinset: i * this.props.perLine + ii + 1,
                       grid: searchResults,
+                      categoryId: 'search',
                     })
                   })}
                 </div>
@@ -1070,6 +1072,7 @@ export default class Picker extends Component {
                             pos: [row.index, ii],
                             posinset: row.posinset + ii,
                             grid: this.grid,
+                            categoryId: category.id,
                           })
                         })}
                     </div>

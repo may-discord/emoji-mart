@@ -5080,7 +5080,7 @@ var $75afa6943437e26f$export$2e2bcd8739ae039 = /*#__PURE__*/ function(Component1
         {
             key: "renderEmojiButton",
             value: function renderEmojiButton(emoji, param) {
-                var pos = param.pos, posinset = param.posinset, grid = param.grid;
+                var pos = param.pos, posinset = param.posinset, grid = param.grid, categoryId = param.categoryId;
                 var _this = this;
                 var size = this.props.emojiButtonSize;
                 var skin = this.state.tempSkin || this.state.skin;
@@ -5089,6 +5089,7 @@ var $75afa6943437e26f$export$2e2bcd8739ae039 = /*#__PURE__*/ function(Component1
                 var selected = (0, $0542300b6c56b62c$export$9cb4719e2e525b7a)(this.state.pos, pos);
                 var key = pos.concat(emoji.id).join("");
                 var isFavorite = (0, $4000c4e330959fe1$export$2e2bcd8739ae039).has(emoji.id);
+                var showFavoriteIndicator = isFavorite && categoryId !== "favorites";
                 return /*#__PURE__*/ (0, $55ec52987511209e$export$34b9dba7ce09269b)((0, $caeffba843b1695e$export$2e2bcd8739ae039), {
                     selected: selected,
                     skin: skin,
@@ -5146,7 +5147,7 @@ var $75afa6943437e26f$export$2e2bcd8739ae039 = /*#__PURE__*/ function(Component1
                                 spritesheet: true,
                                 getSpritesheetURL: this.props.getSpritesheetURL
                             }),
-                            isFavorite && /*#__PURE__*/ (0, $55ec52987511209e$export$34b9dba7ce09269b)("span", {
+                            showFavoriteIndicator && /*#__PURE__*/ (0, $55ec52987511209e$export$34b9dba7ce09269b)("span", {
                                 class: "favorite-indicator",
                                 "aria-hidden": "true",
                                 children: /*#__PURE__*/ (0, $55ec52987511209e$export$34b9dba7ce09269b)("svg", {
@@ -5243,7 +5244,8 @@ var $75afa6943437e26f$export$2e2bcd8739ae039 = /*#__PURE__*/ function(Component1
                                                 ii
                                             ],
                                             posinset: i * _this5.props.perLine + ii + 1,
-                                            grid: searchResults
+                                            grid: searchResults,
+                                            categoryId: "search"
                                         });
                                     })
                                 });
@@ -5315,7 +5317,8 @@ var $75afa6943437e26f$export$2e2bcd8739ae039 = /*#__PURE__*/ function(Component1
                                                         ii
                                                     ],
                                                     posinset: row.posinset + ii,
-                                                    grid: _this.grid
+                                                    grid: _this.grid,
+                                                    categoryId: category.id
                                                 });
                                             })
                                         }, row.index);
