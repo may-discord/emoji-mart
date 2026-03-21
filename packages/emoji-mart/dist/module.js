@@ -538,14 +538,12 @@ var $b22cfd0a55410b4f$export$2e2bcd8739ae039 = {
 
 
 
-const $7932d8512872cd34$var$MAX_FAVORITES = 100;
 let $7932d8512872cd34$var$List = null;
 function $7932d8512872cd34$var$add(emoji) {
     $7932d8512872cd34$var$List || ($7932d8512872cd34$var$List = (0, $f72b75cf796873c7$export$2e2bcd8739ae039).get("favorites") || []);
     const emojiId = emoji.id || emoji;
     if (!emojiId) return;
     if ($7932d8512872cd34$var$List.includes(emojiId)) return;
-    if ($7932d8512872cd34$var$List.length >= $7932d8512872cd34$var$MAX_FAVORITES) $7932d8512872cd34$var$List.shift();
     $7932d8512872cd34$var$List.push(emojiId);
     (0, $f72b75cf796873c7$export$2e2bcd8739ae039).set("favorites", $7932d8512872cd34$var$List);
 }
@@ -582,12 +580,17 @@ function $7932d8512872cd34$var$has(emojiId) {
     $7932d8512872cd34$var$List || ($7932d8512872cd34$var$List = (0, $f72b75cf796873c7$export$2e2bcd8739ae039).get("favorites") || []);
     return $7932d8512872cd34$var$List.includes(emojiId);
 }
+function $7932d8512872cd34$var$set(emojiIds) {
+    $7932d8512872cd34$var$List = emojiIds.slice(0, MAX_FAVORITES);
+    (0, $f72b75cf796873c7$export$2e2bcd8739ae039).set("favorites", $7932d8512872cd34$var$List);
+}
 var $7932d8512872cd34$export$2e2bcd8739ae039 = {
     add: $7932d8512872cd34$var$add,
     remove: $7932d8512872cd34$var$remove,
     toggle: $7932d8512872cd34$var$toggle,
     get: $7932d8512872cd34$var$get,
-    has: $7932d8512872cd34$var$has
+    has: $7932d8512872cd34$var$has,
+    set: $7932d8512872cd34$var$set
 };
 
 

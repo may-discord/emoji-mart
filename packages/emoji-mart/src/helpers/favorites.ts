@@ -1,8 +1,6 @@
 // @ts-nocheck
 import { Store } from '../helpers'
 
-const MAX_FAVORITES = 100
-
 let List: string[] | null = null
 
 function add(emoji: { id: string }) {
@@ -12,10 +10,6 @@ function add(emoji: { id: string }) {
   if (!emojiId) return
 
   if (List.includes(emojiId)) return
-
-  if (List.length >= MAX_FAVORITES) {
-    List.shift()
-  }
 
   List.push(emojiId)
   Store.set('favorites', List)

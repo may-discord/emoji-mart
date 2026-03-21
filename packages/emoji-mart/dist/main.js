@@ -1750,14 +1750,12 @@ var $79925e24c549250c$export$2e2bcd8739ae039 = {
 
 
 
-var $4000c4e330959fe1$var$MAX_FAVORITES = 100;
 var $4000c4e330959fe1$var$List = null;
 function $4000c4e330959fe1$var$add(emoji) {
     $4000c4e330959fe1$var$List || ($4000c4e330959fe1$var$List = (0, $000e3cabb83607f9$export$2e2bcd8739ae039).get("favorites") || []);
     var emojiId = emoji.id || emoji;
     if (!emojiId) return;
     if ($4000c4e330959fe1$var$List.includes(emojiId)) return;
-    if ($4000c4e330959fe1$var$List.length >= $4000c4e330959fe1$var$MAX_FAVORITES) $4000c4e330959fe1$var$List.shift();
     $4000c4e330959fe1$var$List.push(emojiId);
     (0, $000e3cabb83607f9$export$2e2bcd8739ae039).set("favorites", $4000c4e330959fe1$var$List);
 }
@@ -1792,12 +1790,17 @@ function $4000c4e330959fe1$var$has(emojiId) {
     $4000c4e330959fe1$var$List || ($4000c4e330959fe1$var$List = (0, $000e3cabb83607f9$export$2e2bcd8739ae039).get("favorites") || []);
     return $4000c4e330959fe1$var$List.includes(emojiId);
 }
+function $4000c4e330959fe1$var$set(emojiIds) {
+    $4000c4e330959fe1$var$List = emojiIds.slice(0, MAX_FAVORITES);
+    (0, $000e3cabb83607f9$export$2e2bcd8739ae039).set("favorites", $4000c4e330959fe1$var$List);
+}
 var $4000c4e330959fe1$export$2e2bcd8739ae039 = {
     add: $4000c4e330959fe1$var$add,
     remove: $4000c4e330959fe1$var$remove,
     toggle: $4000c4e330959fe1$var$toggle,
     get: $4000c4e330959fe1$var$get,
-    has: $4000c4e330959fe1$var$has
+    has: $4000c4e330959fe1$var$has,
+    set: $4000c4e330959fe1$var$set
 };
 
 
