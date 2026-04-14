@@ -3111,6 +3111,9 @@ function $4229cb2d7488f9c8$export$2e2bcd8739ae039(props) {
     return /*#__PURE__*/ (0, $55ec52987511209e$export$34b9dba7ce09269b)("span", {
         class: "emoji-mart-emoji",
         "data-emoji-set": props.set,
+        onContextMenu: function(e) {
+            return e.preventDefault();
+        },
         children: imageSrc ? /*#__PURE__*/ (0, $55ec52987511209e$export$34b9dba7ce09269b)("img", {
             style: {
                 maxWidth: props.size || "1em",
