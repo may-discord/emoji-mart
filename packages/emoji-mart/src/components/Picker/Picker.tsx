@@ -876,6 +876,7 @@ export default class Picker extends Component {
             this.handleEmojiOver()
             this.handlePointerLeave()
           }}
+          draggable={false}
           onPointerDown={(e) => this.handlePointerDown(emoji, e)}
           onPointerMove={this.handlePointerMove}
           onPointerUp={this.handlePointerUp}
