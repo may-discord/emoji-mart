@@ -880,6 +880,7 @@ export default class Picker extends Component {
           onPointerMove={this.handlePointerMove}
           onPointerUp={this.handlePointerUp}
           onPointerLeave={this.handlePointerLeave}
+          onContextMenu={(e) => e.preventDefault()}
           style={{
             width: this.props.emojiButtonSize,
             height: this.props.emojiButtonSize,
