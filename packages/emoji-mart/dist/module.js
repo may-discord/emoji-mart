@@ -1318,7 +1318,6 @@ function $254755d3f438722f$export$2e2bcd8739ae039(props) {
     return /*#__PURE__*/ (0, $bd9dd35321b03dd4$export$34b9dba7ce09269b)("span", {
         class: "emoji-mart-emoji",
         "data-emoji-set": props.set,
-        onContextMenu: (e)=>e.preventDefault(),
         children: imageSrc ? /*#__PURE__*/ (0, $bd9dd35321b03dd4$export$34b9dba7ce09269b)("img", {
             style: {
                 maxWidth: props.size || "1em",
@@ -1326,7 +1325,8 @@ function $254755d3f438722f$export$2e2bcd8739ae039(props) {
                 display: "inline-block"
             },
             alt: emojiSkin.native || emojiSkin.shortcodes,
-            src: imageSrc
+            src: imageSrc,
+            onContextMenu: (e)=>e.preventDefault()
         }) : props.set == "native" ? /*#__PURE__*/ (0, $bd9dd35321b03dd4$export$34b9dba7ce09269b)("span", {
             style: {
                 fontSize: props.size,
