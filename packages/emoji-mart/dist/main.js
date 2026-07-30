@@ -1504,20 +1504,25 @@ function $55ec52987511209e$export$34b9dba7ce09269b(_1, e1, n, t, f) {
 
 
 
+var $000e3cabb83607f9$var$PREFIX = "emoji-mart.";
+function $000e3cabb83607f9$var$getKey(key) {
+    return "".concat($000e3cabb83607f9$var$PREFIX).concat(key);
+}
 function $000e3cabb83607f9$var$set(key, value) {
     try {
-        window.localStorage["emoji-mart.".concat(key)] = JSON.stringify(value);
+        window.localStorage[$000e3cabb83607f9$var$getKey(key)] = JSON.stringify(value);
     } catch (error) {}
 }
 function $000e3cabb83607f9$var$get(key) {
     try {
-        var value = window.localStorage["emoji-mart.".concat(key)];
+        var value = window.localStorage[$000e3cabb83607f9$var$getKey(key)];
         if (value) return JSON.parse(value);
     } catch (error) {}
 }
 var $000e3cabb83607f9$export$2e2bcd8739ae039 = {
     set: $000e3cabb83607f9$var$set,
-    get: $000e3cabb83607f9$var$get
+    get: $000e3cabb83607f9$var$get,
+    getKey: $000e3cabb83607f9$var$getKey
 };
 
 
@@ -1786,6 +1791,11 @@ function $4000c4e330959fe1$var$get() {
     $4000c4e330959fe1$var$List || ($4000c4e330959fe1$var$List = (0, $000e3cabb83607f9$export$2e2bcd8739ae039).get("favorites") || []);
     return (0, (/*@__PURE__*/$parcel$interopDefault($768065e6069a057e$exports)))($4000c4e330959fe1$var$List);
 }
+// Force-reload the cached list from localStorage, e.g. after an external
+// (cross-tab) edit is detected via the `storage` event.
+function $4000c4e330959fe1$var$sync() {
+    $4000c4e330959fe1$var$List = (0, $000e3cabb83607f9$export$2e2bcd8739ae039).get("favorites") || [];
+}
 function $4000c4e330959fe1$var$has(emojiId) {
     $4000c4e330959fe1$var$List || ($4000c4e330959fe1$var$List = (0, $000e3cabb83607f9$export$2e2bcd8739ae039).get("favorites") || []);
     return $4000c4e330959fe1$var$List.includes(emojiId);
@@ -1800,7 +1810,8 @@ var $4000c4e330959fe1$export$2e2bcd8739ae039 = {
     toggle: $4000c4e330959fe1$var$toggle,
     get: $4000c4e330959fe1$var$get,
     has: $4000c4e330959fe1$var$has,
-    set: $4000c4e330959fe1$var$set
+    set: $4000c4e330959fe1$var$set,
+    sync: $4000c4e330959fe1$var$sync
 };
 
 
@@ -4013,6 +4024,11 @@ var $75afa6943437e26f$export$2e2bcd8739ae039 = /*#__PURE__*/ function(Component1
         (0, (/*@__PURE__*/$parcel$interopDefault($aceb8ee155713853$exports)))(this, Picker);
         var _this;
         _this = _super.call(this);
+        (0, (/*@__PURE__*/$parcel$interopDefault($gntqc)))((0, (/*@__PURE__*/$parcel$interopDefault($5MCow)))(_this), "handleStorageChange", function(e) {
+            if (e.key !== (0, $000e3cabb83607f9$export$2e2bcd8739ae039).getKey("favorites")) return;
+            (0, $4000c4e330959fe1$export$2e2bcd8739ae039).sync();
+            _this.refreshFavoritesCategory();
+        });
         (0, (/*@__PURE__*/$parcel$interopDefault($gntqc)))((0, (/*@__PURE__*/$parcel$interopDefault($5MCow)))(_this), "darkMediaCallback", function() {
             if (_this.props.theme != "auto") return;
             _this.setState({
@@ -4410,6 +4426,7 @@ var $75afa6943437e26f$export$2e2bcd8739ae039 = /*#__PURE__*/ function(Component1
             key: "register",
             value: function register() {
                 document.addEventListener("click", this.handleClickOutside);
+                window.addEventListener("storage", this.handleStorageChange);
                 this.observe();
             }
         },
@@ -4418,6 +4435,7 @@ var $75afa6943437e26f$export$2e2bcd8739ae039 = /*#__PURE__*/ function(Component1
             value: function unregister() {
                 var ref;
                 document.removeEventListener("click", this.handleClickOutside);
+                window.removeEventListener("storage", this.handleStorageChange);
                 (ref = this.darkMedia) === null || ref === void 0 ? void 0 : ref.removeEventListener("change", this.darkMediaCallback);
                 this.unobserve();
             }

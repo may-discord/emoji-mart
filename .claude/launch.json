@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "website",
+      "runtimeExecutable": "yarn",
+      "runtimeArgs": ["workspace", "@emoji-mart/website", "dev"],
+      "port": 1234
+    }
+  ]
+}

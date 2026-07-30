@@ -330,20 +330,25 @@ function $bd9dd35321b03dd4$export$34b9dba7ce09269b(_1, e1, n, t, f) {
 
 
 
+const $f72b75cf796873c7$var$PREFIX = "emoji-mart.";
+function $f72b75cf796873c7$var$getKey(key) {
+    return `${$f72b75cf796873c7$var$PREFIX}${key}`;
+}
 function $f72b75cf796873c7$var$set(key, value) {
     try {
-        window.localStorage[`emoji-mart.${key}`] = JSON.stringify(value);
+        window.localStorage[$f72b75cf796873c7$var$getKey(key)] = JSON.stringify(value);
     } catch (error) {}
 }
 function $f72b75cf796873c7$var$get(key) {
     try {
-        const value = window.localStorage[`emoji-mart.${key}`];
+        const value = window.localStorage[$f72b75cf796873c7$var$getKey(key)];
         if (value) return JSON.parse(value);
     } catch (error) {}
 }
 var $f72b75cf796873c7$export$2e2bcd8739ae039 = {
     set: $f72b75cf796873c7$var$set,
-    get: $f72b75cf796873c7$var$get
+    get: $f72b75cf796873c7$var$get,
+    getKey: $f72b75cf796873c7$var$getKey
 };
 
 
@@ -576,6 +581,11 @@ function $7932d8512872cd34$var$get() {
         ...$7932d8512872cd34$var$List
     ];
 }
+// Force-reload the cached list from localStorage, e.g. after an external
+// (cross-tab) edit is detected via the `storage` event.
+function $7932d8512872cd34$var$sync() {
+    $7932d8512872cd34$var$List = (0, $f72b75cf796873c7$export$2e2bcd8739ae039).get("favorites") || [];
+}
 function $7932d8512872cd34$var$has(emojiId) {
     $7932d8512872cd34$var$List || ($7932d8512872cd34$var$List = (0, $f72b75cf796873c7$export$2e2bcd8739ae039).get("favorites") || []);
     return $7932d8512872cd34$var$List.includes(emojiId);
@@ -590,7 +600,8 @@ var $7932d8512872cd34$export$2e2bcd8739ae039 = {
     toggle: $7932d8512872cd34$var$toggle,
     get: $7932d8512872cd34$var$get,
     has: $7932d8512872cd34$var$has,
-    set: $7932d8512872cd34$var$set
+    set: $7932d8512872cd34$var$set,
+    sync: $7932d8512872cd34$var$sync
 };
 
 
@@ -2101,10 +2112,12 @@ class $89bd6bb200cc8fef$export$2e2bcd8739ae039 extends (0, $fb96b826c0c5f37a$exp
     }
     register() {
         document.addEventListener("click", this.handleClickOutside);
+        window.addEventListener("storage", this.handleStorageChange);
         this.observe();
     }
     unregister() {
         document.removeEventListener("click", this.handleClickOutside);
+        window.removeEventListener("storage", this.handleStorageChange);
         this.darkMedia?.removeEventListener("change", this.darkMediaCallback);
         this.unobserve();
     }
@@ -2894,6 +2907,11 @@ class $89bd6bb200cc8fef$export$2e2bcd8739ae039 extends (0, $fb96b826c0c5f37a$exp
     }
     constructor(props){
         super();
+        (0, $c770c458706daa72$export$2e2bcd8739ae039)(this, "handleStorageChange", (e)=>{
+            if (e.key !== (0, $f72b75cf796873c7$export$2e2bcd8739ae039).getKey("favorites")) return;
+            (0, $7932d8512872cd34$export$2e2bcd8739ae039).sync();
+            this.refreshFavoritesCategory();
+        });
         (0, $c770c458706daa72$export$2e2bcd8739ae039)(this, "darkMediaCallback", ()=>{
             if (this.props.theme != "auto") return;
             this.setState({

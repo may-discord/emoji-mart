@@ -133,13 +133,22 @@ export default class Picker extends Component {
 
   register() {
     document.addEventListener('click', this.handleClickOutside)
+    window.addEventListener('storage', this.handleStorageChange)
     this.observe()
   }
 
   unregister() {
     document.removeEventListener('click', this.handleClickOutside)
+    window.removeEventListener('storage', this.handleStorageChange)
     this.darkMedia?.removeEventListener('change', this.darkMediaCallback)
     this.unobserve()
+  }
+
+  handleStorageChange = (e) => {
+    if (e.key !== Store.getKey('favorites')) return
+
+    Favorites.sync()
+    this.refreshFavoritesCategory()
   }
 
   observe() {
@@ -697,8 +706,11 @@ export default class Picker extends Component {
 
   showFavoriteAnimation(target, added) {
     const el = document.createElement('span')
-    el.className = added ? 'favorite-anim favorite-anim-add' : 'favorite-anim favorite-anim-remove'
-    el.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 .587l3.668 7.568L24 9.306l-6.064 5.828 1.48 8.279L12 19.446l-7.417 3.967 1.481-8.279L0 9.306l8.332-1.151z"/></svg>'
+    el.className = added
+      ? 'favorite-anim favorite-anim-add'
+      : 'favorite-anim favorite-anim-remove'
+    el.innerHTML =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 .587l3.668 7.568L24 9.306l-6.064 5.828 1.48 8.279L12 19.446l-7.417 3.967 1.481-8.279L0 9.306l8.332-1.151z"/></svg>'
     target.appendChild(el)
     setTimeout(() => el.remove(), 600)
   }
@@ -911,7 +923,13 @@ export default class Picker extends Component {
           />
           {showFavoriteIndicator && (
             <span class="favorite-indicator" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="8" height="8">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                width="8"
+                height="8"
+              >
                 <path d="M12 .587l3.668 7.568L24 9.306l-6.064 5.828 1.48 8.279L12 19.446l-7.417 3.967 1.481-8.279L0 9.306l8.332-1.151z" />
               </svg>
             </span>

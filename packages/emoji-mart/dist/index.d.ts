@@ -1,9 +1,11 @@
 import { HTMLElement as _HTMLElement1 } from "components/HTMLElement";
+declare function getKey(key: string): string;
 declare function set(key: string, value: string): void;
 declare function get(key: string): any;
 export const Store: {
     set: typeof set;
     get: typeof get;
+    getKey: typeof getKey;
 };
 declare function add(emoji: {
     id: string;
@@ -29,6 +31,7 @@ declare function toggle(emoji: {
     added: boolean;
 };
 declare function _get2(): string[];
+declare function sync(): void;
 declare function has(emojiId: string): boolean;
 declare function _set1(emojiIds: string[]): void;
 export const Favorites: {
@@ -38,6 +41,7 @@ export const Favorites: {
     _get2: typeof _get2;
     has: typeof has;
     _set1: typeof _set1;
+    sync: typeof sync;
 };
 export let I18n: any;
 export let Data: any;

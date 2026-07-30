@@ -44,6 +44,12 @@ function get(): string[] {
   return [...List]
 }
 
+// Force-reload the cached list from localStorage, e.g. after an external
+// (cross-tab) edit is detected via the `storage` event.
+function sync() {
+  List = Store.get('favorites') || []
+}
+
 function has(emojiId: string): boolean {
   List || (List = Store.get('favorites') || [])
   return List.includes(emojiId)
@@ -54,4 +60,4 @@ function set(emojiIds: string[]) {
   Store.set('favorites', List)
 }
 
-export default { add, remove, toggle, get, has, set }
+export default { add, remove, toggle, get, has, set, sync }

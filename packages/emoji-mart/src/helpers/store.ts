@@ -1,12 +1,18 @@
+const PREFIX = 'emoji-mart.'
+
+function getKey(key: string): string {
+  return `${PREFIX}${key}`
+}
+
 function set(key: string, value: string) {
   try {
-    window.localStorage[`emoji-mart.${key}`] = JSON.stringify(value)
+    window.localStorage[getKey(key)] = JSON.stringify(value)
   } catch (error) {}
 }
 
 function get(key: string): any {
   try {
-    const value = window.localStorage[`emoji-mart.${key}`]
+    const value = window.localStorage[getKey(key)]
 
     if (value) {
       return JSON.parse(value)
@@ -14,4 +20,4 @@ function get(key: string): any {
   } catch (error) {}
 }
 
-export default { set, get }
+export default { set, get, getKey }
