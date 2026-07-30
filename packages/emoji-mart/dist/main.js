@@ -1756,6 +1756,7 @@ var $79925e24c549250c$export$2e2bcd8739ae039 = {
 
 
 var $4000c4e330959fe1$var$List = null;
+var $4000c4e330959fe1$var$listeners = new Set();
 function $4000c4e330959fe1$var$add(emoji) {
     $4000c4e330959fe1$var$List || ($4000c4e330959fe1$var$List = (0, $000e3cabb83607f9$export$2e2bcd8739ae039).get("favorites") || []);
     var emojiId = emoji.id || emoji;
@@ -1791,10 +1792,21 @@ function $4000c4e330959fe1$var$get() {
     $4000c4e330959fe1$var$List || ($4000c4e330959fe1$var$List = (0, $000e3cabb83607f9$export$2e2bcd8739ae039).get("favorites") || []);
     return (0, (/*@__PURE__*/$parcel$interopDefault($768065e6069a057e$exports)))($4000c4e330959fe1$var$List);
 }
-// Force-reload the cached list from localStorage, e.g. after an external
-// (cross-tab) edit is detected via the `storage` event.
+// Reload the cached list from localStorage and notify subscribed pickers.
+// Call this after editing the `emoji-mart.favorites` localStorage entry
+// from outside the picker (e.g. directly, or from another part of the app)
+// so open pickers pick up the change without a page reload.
 function $4000c4e330959fe1$var$sync() {
     $4000c4e330959fe1$var$List = (0, $000e3cabb83607f9$export$2e2bcd8739ae039).get("favorites") || [];
+    $4000c4e330959fe1$var$listeners.forEach(function(listener) {
+        return listener();
+    });
+}
+function $4000c4e330959fe1$var$subscribe(listener) {
+    $4000c4e330959fe1$var$listeners.add(listener);
+    return function() {
+        return $4000c4e330959fe1$var$listeners.delete(listener);
+    };
 }
 function $4000c4e330959fe1$var$has(emojiId) {
     $4000c4e330959fe1$var$List || ($4000c4e330959fe1$var$List = (0, $000e3cabb83607f9$export$2e2bcd8739ae039).get("favorites") || []);
@@ -1811,7 +1823,8 @@ var $4000c4e330959fe1$export$2e2bcd8739ae039 = {
     get: $4000c4e330959fe1$var$get,
     has: $4000c4e330959fe1$var$has,
     set: $4000c4e330959fe1$var$set,
-    sync: $4000c4e330959fe1$var$sync
+    sync: $4000c4e330959fe1$var$sync,
+    subscribe: $4000c4e330959fe1$var$subscribe
 };
 
 
@@ -4027,7 +4040,6 @@ var $75afa6943437e26f$export$2e2bcd8739ae039 = /*#__PURE__*/ function(Component1
         (0, (/*@__PURE__*/$parcel$interopDefault($gntqc)))((0, (/*@__PURE__*/$parcel$interopDefault($5MCow)))(_this), "handleStorageChange", function(e) {
             if (e.key !== (0, $000e3cabb83607f9$export$2e2bcd8739ae039).getKey("favorites")) return;
             (0, $4000c4e330959fe1$export$2e2bcd8739ae039).sync();
-            _this.refreshFavoritesCategory();
         });
         (0, (/*@__PURE__*/$parcel$interopDefault($gntqc)))((0, (/*@__PURE__*/$parcel$interopDefault($5MCow)))(_this), "darkMediaCallback", function() {
             if (_this.props.theme != "auto") return;
@@ -4425,18 +4437,23 @@ var $75afa6943437e26f$export$2e2bcd8739ae039 = /*#__PURE__*/ function(Component1
         {
             key: "register",
             value: function register() {
+                var _this = this;
                 document.addEventListener("click", this.handleClickOutside);
                 window.addEventListener("storage", this.handleStorageChange);
+                this.unsubscribeFavorites = (0, $4000c4e330959fe1$export$2e2bcd8739ae039).subscribe(function() {
+                    return _this.refreshFavoritesCategory();
+                });
                 this.observe();
             }
         },
         {
             key: "unregister",
             value: function unregister() {
-                var ref;
+                var _obj, ref, ref1;
                 document.removeEventListener("click", this.handleClickOutside);
                 window.removeEventListener("storage", this.handleStorageChange);
-                (ref = this.darkMedia) === null || ref === void 0 ? void 0 : ref.removeEventListener("change", this.darkMediaCallback);
+                (ref = (_obj = this).unsubscribeFavorites) === null || ref === void 0 ? void 0 : ref.call(_obj);
+                (ref1 = this.darkMedia) === null || ref1 === void 0 ? void 0 : ref1.removeEventListener("change", this.darkMediaCallback);
                 this.unobserve();
             }
         },
@@ -5298,7 +5315,7 @@ var $75afa6943437e26f$export$2e2bcd8739ae039 = /*#__PURE__*/ function(Component1
                     },
                     children: categories.map(function(category) {
                         var _this6 = _this7;
-                        var ref1 = _this7.refs.categories.get(category.id), root = ref1.root, rows = ref1.rows;
+                        var ref2 = _this7.refs.categories.get(category.id), root = ref2.root, rows = ref2.rows;
                         return /*#__PURE__*/ (0, $55ec52987511209e$export$34b9dba7ce09269b)("div", {
                             "data-id": category.target ? category.target.id : category.id,
                             class: "category",

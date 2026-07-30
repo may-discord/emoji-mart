@@ -2,6 +2,7 @@
 import { Store } from '../helpers'
 
 let List: string[] | null = null
+const listeners = new Set<() => void>()
 
 function add(emoji: { id: string }) {
   List || (List = Store.get('favorites') || [])
@@ -44,10 +45,18 @@ function get(): string[] {
   return [...List]
 }
 
-// Force-reload the cached list from localStorage, e.g. after an external
-// (cross-tab) edit is detected via the `storage` event.
+// Reload the cached list from localStorage and notify subscribed pickers.
+// Call this after editing the `emoji-mart.favorites` localStorage entry
+// from outside the picker (e.g. directly, or from another part of the app)
+// so open pickers pick up the change without a page reload.
 function sync() {
   List = Store.get('favorites') || []
+  listeners.forEach((listener) => listener())
+}
+
+function subscribe(listener: () => void): () => void {
+  listeners.add(listener)
+  return () => listeners.delete(listener)
 }
 
 function has(emojiId: string): boolean {
@@ -60,4 +69,4 @@ function set(emojiIds: string[]) {
   Store.set('favorites', List)
 }
 
-export default { add, remove, toggle, get, has, set, sync }
+export default { add, remove, toggle, get, has, set, sync, subscribe }

@@ -544,6 +544,7 @@ var $b22cfd0a55410b4f$export$2e2bcd8739ae039 = {
 
 
 let $7932d8512872cd34$var$List = null;
+const $7932d8512872cd34$var$listeners = new Set();
 function $7932d8512872cd34$var$add(emoji) {
     $7932d8512872cd34$var$List || ($7932d8512872cd34$var$List = (0, $f72b75cf796873c7$export$2e2bcd8739ae039).get("favorites") || []);
     const emojiId = emoji.id || emoji;
@@ -581,10 +582,17 @@ function $7932d8512872cd34$var$get() {
         ...$7932d8512872cd34$var$List
     ];
 }
-// Force-reload the cached list from localStorage, e.g. after an external
-// (cross-tab) edit is detected via the `storage` event.
+// Reload the cached list from localStorage and notify subscribed pickers.
+// Call this after editing the `emoji-mart.favorites` localStorage entry
+// from outside the picker (e.g. directly, or from another part of the app)
+// so open pickers pick up the change without a page reload.
 function $7932d8512872cd34$var$sync() {
     $7932d8512872cd34$var$List = (0, $f72b75cf796873c7$export$2e2bcd8739ae039).get("favorites") || [];
+    $7932d8512872cd34$var$listeners.forEach((listener)=>listener());
+}
+function $7932d8512872cd34$var$subscribe(listener) {
+    $7932d8512872cd34$var$listeners.add(listener);
+    return ()=>$7932d8512872cd34$var$listeners.delete(listener);
 }
 function $7932d8512872cd34$var$has(emojiId) {
     $7932d8512872cd34$var$List || ($7932d8512872cd34$var$List = (0, $f72b75cf796873c7$export$2e2bcd8739ae039).get("favorites") || []);
@@ -601,7 +609,8 @@ var $7932d8512872cd34$export$2e2bcd8739ae039 = {
     get: $7932d8512872cd34$var$get,
     has: $7932d8512872cd34$var$has,
     set: $7932d8512872cd34$var$set,
-    sync: $7932d8512872cd34$var$sync
+    sync: $7932d8512872cd34$var$sync,
+    subscribe: $7932d8512872cd34$var$subscribe
 };
 
 
@@ -2113,11 +2122,13 @@ class $89bd6bb200cc8fef$export$2e2bcd8739ae039 extends (0, $fb96b826c0c5f37a$exp
     register() {
         document.addEventListener("click", this.handleClickOutside);
         window.addEventListener("storage", this.handleStorageChange);
+        this.unsubscribeFavorites = (0, $7932d8512872cd34$export$2e2bcd8739ae039).subscribe(()=>this.refreshFavoritesCategory());
         this.observe();
     }
     unregister() {
         document.removeEventListener("click", this.handleClickOutside);
         window.removeEventListener("storage", this.handleStorageChange);
+        this.unsubscribeFavorites?.();
         this.darkMedia?.removeEventListener("change", this.darkMediaCallback);
         this.unobserve();
     }
@@ -2910,7 +2921,6 @@ class $89bd6bb200cc8fef$export$2e2bcd8739ae039 extends (0, $fb96b826c0c5f37a$exp
         (0, $c770c458706daa72$export$2e2bcd8739ae039)(this, "handleStorageChange", (e)=>{
             if (e.key !== (0, $f72b75cf796873c7$export$2e2bcd8739ae039).getKey("favorites")) return;
             (0, $7932d8512872cd34$export$2e2bcd8739ae039).sync();
-            this.refreshFavoritesCategory();
         });
         (0, $c770c458706daa72$export$2e2bcd8739ae039)(this, "darkMediaCallback", ()=>{
             if (this.props.theme != "auto") return;

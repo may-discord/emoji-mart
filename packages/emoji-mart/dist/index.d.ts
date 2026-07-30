@@ -32,6 +32,7 @@ declare function toggle(emoji: {
 };
 declare function _get2(): string[];
 declare function sync(): void;
+declare function subscribe(listener: () => void): () => void;
 declare function has(emojiId: string): boolean;
 declare function _set1(emojiIds: string[]): void;
 export const Favorites: {
@@ -42,6 +43,7 @@ export const Favorites: {
     has: typeof has;
     _set1: typeof _set1;
     sync: typeof sync;
+    subscribe: typeof subscribe;
 };
 export let I18n: any;
 export let Data: any;

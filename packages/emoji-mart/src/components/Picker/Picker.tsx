@@ -134,12 +134,16 @@ export default class Picker extends Component {
   register() {
     document.addEventListener('click', this.handleClickOutside)
     window.addEventListener('storage', this.handleStorageChange)
+    this.unsubscribeFavorites = Favorites.subscribe(() =>
+      this.refreshFavoritesCategory(),
+    )
     this.observe()
   }
 
   unregister() {
     document.removeEventListener('click', this.handleClickOutside)
     window.removeEventListener('storage', this.handleStorageChange)
+    this.unsubscribeFavorites?.()
     this.darkMedia?.removeEventListener('change', this.darkMediaCallback)
     this.unobserve()
   }
@@ -148,7 +152,6 @@ export default class Picker extends Component {
     if (e.key !== Store.getKey('favorites')) return
 
     Favorites.sync()
-    this.refreshFavoritesCategory()
   }
 
   observe() {
