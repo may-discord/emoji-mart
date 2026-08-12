@@ -1,0 +1,60 @@
+name: Publish emoji-mart to GitHub Packages
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Verify tag matches package.json version
+        run: |
+          TAG_VERSION="${GITHUB_REF_NAME#v}"
+          PKG_VERSION="$(node -p "require('./packages/emoji-mart/package.json').version")"
+          if [ "$TAG_VERSION" != "$PKG_VERSION" ]; then
+            echo "::error::Tag version ($TAG_VERSION) does not match packages/emoji-mart/package.json version ($PKG_VERSION)."
+            exit 1
+          fi
+
+      - uses: nodenv/actions/node-version@v2.0.10
+        id: nodenv
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "${{ steps.nodenv.outputs.node-version }}"
+          cache: yarn
+          registry-url: https://npm.pkg.github.com
+          scope: "@may-discord"
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build emoji-mart
+        run: yarn build
+
+      - name: Rename package for GitHub Packages
+        run: |
+          node -e "
+            const fs = require('fs');
+            const path = 'packages/emoji-mart/package.json';
+            const pkg = JSON.parse(fs.readFileSync(path, 'utf8'));
+            pkg.name = '@may-discord/emoji-mart';
+            pkg.publishConfig = { registry: 'https://npm.pkg.github.com' };
+            fs.writeFileSync(path, JSON.stringify(pkg, null, 2) + '\n');
+          "
+
+      - name: Publish
+        working-directory: packages/emoji-mart
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
