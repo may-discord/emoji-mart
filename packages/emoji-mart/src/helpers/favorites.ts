@@ -65,7 +65,7 @@ function has(emojiId: string): boolean {
 }
 
 function set(emojiIds: string[]) {
-  List = emojiIds.slice(0, MAX_FAVORITES)
+  List = emojiIds.slice()
   Store.set('favorites', List)
 }
 

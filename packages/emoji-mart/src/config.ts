@@ -102,6 +102,16 @@ async function _init(props) {
           `https://cdn.jsdelivr.net/npm/@emoji-mart/data@latest/i18n/${locale}.json`,
         ))
 
+  // Forget custom emojis registered by a previous init so that emojis
+  // removed from `custom` are no longer resolvable (favorites, frequent, search).
+  if (Data.customEmojiIds) {
+    for (const emojiId of Data.customEmojiIds) {
+      delete Data.emojis[emojiId]
+    }
+    SearchIndex.reset()
+  }
+  Data.customEmojiIds = []
+
   if (props.custom) {
     for (let i in props.custom) {
       i = parseInt(i)
@@ -120,6 +130,8 @@ async function _init(props) {
       Data.categories.push(category)
 
       for (const emoji of category.emojis) {
+        // Don't track ids that shadow built-in emojis, or a later init would delete them
+        if (!Data.emojis[emoji.id]) Data.customEmojiIds.push(emoji.id)
         Data.emojis[emoji.id] = emoji
       }
     }

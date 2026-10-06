@@ -722,15 +722,20 @@ export default class Picker extends Component {
     const { categories } = Data
     const favCategory = categories.find((c) => c.id === 'favorites')
 
+    // Favorites may reference emojis that no longer exist (e.g. deleted
+    // custom emojis), so drop ids that cannot be resolved.
+    const favoriteEmojis = Favorites.get().filter(
+      (emojiId) => !!SearchIndex.get(emojiId),
+    )
+
     if (favCategory) {
-      favCategory.emojis = Favorites.get()
+      favCategory.emojis = favoriteEmojis
 
       if (!favCategory.emojis.length) {
         const idx = categories.indexOf(favCategory)
         if (idx !== -1) categories.splice(idx, 1)
       }
     } else {
-      const favoriteEmojis = Favorites.get()
       if (favoriteEmojis.length) {
         const insertIndex = 0
         categories.splice(insertIndex, 0, {
@@ -1078,7 +1083,9 @@ export default class Picker extends Component {
                     >
                       {visible &&
                         emojiIds.map((emojiId, ii) => {
-                          if (!emojiId) {
+                          const emoji = emojiId && SearchIndex.get(emojiId)
+
+                          if (!emoji) {
                             return (
                               <div
                                 style={{
@@ -1088,8 +1095,6 @@ export default class Picker extends Component {
                               ></div>
                             )
                           }
-
-                          const emoji = SearchIndex.get(emojiId)
 
                           return this.renderEmojiButton(emoji, {
                             pos: [row.index, ii],
